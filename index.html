@@ -141,6 +141,32 @@
             background: #F8D7DA;
             color: #721C24;
         }
+        .hint-button {
+            background: #FF9800;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            margin: 0 5px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .hint-button:hover {
+            background: #F57C00;
+        }
+        .hint-display {
+            background: #FFF3E0;
+            border: 2px solid #FF9800;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+            color: #E65100;
+            font-style: italic;
+        }
+        .hint-display::before {
+            content: "💡 Hint: ";
+            font-weight: bold;
+        }
     </style>
     <script type="text/babel">
         function GearGearsGame({ onComplete }) {
@@ -150,6 +176,8 @@
             const [feedback, setFeedback] = React.useState("");
             const [showFeedback, setShowFeedback] = React.useState(false);
             const [correctAnswers, setCorrectAnswers] = React.useState(0);
+            const [currentHintIndex, setCurrentHintIndex] = React.useState(-1);
+            const [hintsUsed, setHintsUsed] = React.useState(0);
 
             React.useEffect(() => {
                 fetch('./content/fractions.json')
@@ -195,9 +223,7 @@
                         if (currentProblemIndex < contentData.items.length - 1) {
                             // Move to next problem
                             setCurrentProblemIndex(currentProblemIndex + 1);
-                            setSelectedGear(null);
-                            setShowFeedback(false);
-                            setFeedback("");
+                            resetProblem();
                         } else {
                             // Game complete - award stars based on performance
                             const stars = newCorrectAnswers === contentData.items.length ? 3 : 
@@ -212,6 +238,20 @@
                 setSelectedGear(null);
                 setFeedback("");
                 setShowFeedback(false);
+            };
+
+            const showHint = () => {
+                if (currentHintIndex < currentProblem.hints.length - 1) {
+                    setCurrentHintIndex(currentHintIndex + 1);
+                    setHintsUsed(hintsUsed + 1);
+                }
+            };
+
+            const resetProblem = () => {
+                setSelectedGear(null);
+                setFeedback("");
+                setShowFeedback(false);
+                setCurrentHintIndex(-1);
             };
 
             return (
@@ -232,6 +272,12 @@
                         ))}
                     </div>
 
+                    {currentHintIndex >= 0 && (
+                        <div className="hint-display">
+                            {currentProblem.hints[currentHintIndex]}
+                        </div>
+                    )}
+
                     {showFeedback && (
                         <div className={`feedback ${selectedGear === currentProblem.correct ? 'correct' : 'incorrect'}`}>
                             {feedback}
@@ -242,7 +288,12 @@
                         <button className="game-button" onClick={checkAnswer} disabled={selectedGear === null}>
                             Check Answer
                         </button>
-                        <button className="game-button" onClick={resetGame}>
+                        {currentHintIndex < currentProblem.hints.length - 1 && (
+                            <button className="hint-button" onClick={showHint}>
+                                💡 Hint ({currentHintIndex + 2}/{currentProblem.hints.length})
+                            </button>
+                        )}
+                        <button className="game-button" onClick={resetProblem}>
                             Try Again
                         </button>
                         <button className="game-button" onClick={() => onComplete(0)}>

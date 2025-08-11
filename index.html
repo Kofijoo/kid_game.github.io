@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quest of the Sky Coders</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body>
+    <div id="root"></div>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #87CEEB, #98FB98);
+            min-height: 100vh;
+        }
+        .game-container {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+        .start-button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 25px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        .start-button:hover {
+            background: #45a049;
+        }
+    </style>
+    <script type="text/babel">
+        function App() {
+            const [gameStarted, setGameStarted] = React.useState(false);
+
+            const startAdventure = () => {
+                setGameStarted(true);
+            };
+
+            return (
+                <div className="game-container">
+                    <h1>Quest of the Sky Coders</h1>
+                    {!gameStarted ? (
+                        <div>
+                            <p>Repair floating islands by solving learning challenges!</p>
+                            <button className="start-button" onClick={startAdventure}>
+                                Start Adventure
+                            </button>
+                        </div>
+                    ) : (
+                        <div>
+                            <p>Welcome to the Sky Islands! 🏝️</p>
+                            <p>Your adventure begins...</p>
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>

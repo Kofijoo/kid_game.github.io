@@ -144,14 +144,37 @@
     </style>
     <script type="text/babel">
         function GearGearsGame({ onComplete }) {
-            const [currentProblem, setCurrentProblem] = React.useState({
-                question: "Which gear is larger?",
-                fractions: ["1/2", "3/8"],
-                correct: 0
-            });
+            const [contentData, setContentData] = React.useState(null);
+            const [currentProblemIndex, setCurrentProblemIndex] = React.useState(0);
             const [selectedGear, setSelectedGear] = React.useState(null);
             const [feedback, setFeedback] = React.useState("");
             const [showFeedback, setShowFeedback] = React.useState(false);
+            const [correctAnswers, setCorrectAnswers] = React.useState(0);
+
+            React.useEffect(() => {
+                fetch('./content/fractions.json')
+                    .then(response => response.json())
+                    .then(data => setContentData(data))
+                    .catch(error => {
+                        console.error('Error loading content:', error);
+                        // Fallback data
+                        setContentData({
+                            items: [{
+                                id: "frac_001",
+                                question: "Which gear is larger?",
+                                fractions: ["1/2", "3/8"],
+                                correct: 0,
+                                hints: ["Think about which fraction covers more"]
+                            }]
+                        });
+                    });
+            }, []);
+
+            if (!contentData) {
+                return <div className="mini-game">Loading...</div>;
+            }
+
+            const currentProblem = contentData.items[currentProblemIndex];
 
             const selectGear = (index) => {
                 setSelectedGear(index);
@@ -165,8 +188,22 @@
                 setShowFeedback(true);
                 
                 if (isCorrect) {
+                    const newCorrectAnswers = correctAnswers + 1;
+                    setCorrectAnswers(newCorrectAnswers);
+                    
                     setTimeout(() => {
-                        onComplete(1); // Award 1 star
+                        if (currentProblemIndex < contentData.items.length - 1) {
+                            // Move to next problem
+                            setCurrentProblemIndex(currentProblemIndex + 1);
+                            setSelectedGear(null);
+                            setShowFeedback(false);
+                            setFeedback("");
+                        } else {
+                            // Game complete - award stars based on performance
+                            const stars = newCorrectAnswers === contentData.items.length ? 3 : 
+                                         newCorrectAnswers >= contentData.items.length * 0.7 ? 2 : 1;
+                            onComplete(stars);
+                        }
                     }, 2000);
                 }
             };
@@ -180,6 +217,7 @@
             return (
                 <div className="mini-game">
                     <h3>⚙️ Gear Gears - Fraction Challenge</h3>
+                    <p>Problem {currentProblemIndex + 1} of {contentData.items.length}</p>
                     <p>{currentProblem.question}</p>
                     
                     <div className="gear-container">

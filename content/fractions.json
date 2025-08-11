@@ -1,0 +1,35 @@
+{
+  "pack_id": "fractions_basic",
+  "locale": "en-US",
+  "topic": "fractions.compare",
+  "title": "Fraction Falls Challenge",
+  "items": [
+    {
+      "id": "frac_001",
+      "question": "Which gear is larger?",
+      "fractions": ["1/2", "3/8"],
+      "correct": 0,
+      "band": "A",
+      "hints": ["Think about which fraction covers more of a whole", "Convert both to eighths: 1/2 = 4/8"],
+      "misconceptions": ["compare_numerators_only"]
+    },
+    {
+      "id": "frac_002", 
+      "question": "Which gear is larger?",
+      "fractions": ["2/3", "1/4"],
+      "correct": 0,
+      "band": "A",
+      "hints": ["Compare how much of the whole each fraction represents", "2/3 means 2 out of 3 parts"],
+      "misconceptions": ["compare_denominators_only"]
+    },
+    {
+      "id": "frac_003",
+      "question": "Which gear is larger?", 
+      "fractions": ["3/4", "5/8"],
+      "correct": 0,
+      "band": "B",
+      "hints": ["Convert to the same denominator", "3/4 = 6/8, so compare 6/8 vs 5/8"],
+      "misconceptions": ["compare_numerators_only"]
+    }
+  ]
+}

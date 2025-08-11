@@ -9,17 +9,22 @@
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="./src/xapi.js"></script>
     <script src="./src/scorm.js"></script>
+    <script src="./src/sounds.js"></script>
 </head>
 <body>
     <div id="root"></div>
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Comic Sans MS', 'Trebuchet MS', cursive, sans-serif;
             margin: 0;
-            padding: 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 10px;
+            background: linear-gradient(135deg, #87CEEB 0%, #98FB98 50%, #FFB6C1 100%);
             min-height: 100vh;
             overflow-x: hidden;
+        }
+        
+        @media (max-width: 768px) {
+            body { padding: 5px; }
         }
         
         body::before {
@@ -37,7 +42,11 @@
             text-align: center;
             max-width: 800px;
             margin: 0 auto;
-            padding: 40px;
+            padding: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .game-container { padding: 10px; }
         }
         .start-button {
             background: #4CAF50;
@@ -54,13 +63,28 @@
         }
         .island-map {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 30px;
-            margin-top: 40px;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
             max-width: 700px;
             margin-left: auto;
             margin-right: auto;
             perspective: 1000px;
+        }
+        
+        @media (max-width: 768px) {
+            .island-map {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+                max-width: 400px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .island-map {
+                grid-template-columns: 1fr;
+                max-width: 200px;
+            }
         }
         .island {
             position: relative;
@@ -73,6 +97,21 @@
             cursor: pointer;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             transform-style: preserve-3d;
+            margin: 0 auto;
+        }
+        
+        @media (max-width: 768px) {
+            .island {
+                width: 120px;
+                height: 80px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .island {
+                width: 160px;
+                height: 100px;
+            }
         }
         
         .island::before {
@@ -85,16 +124,74 @@
             border-radius: 50%;
             background: linear-gradient(145deg, #8B4513, #A0522D);
             box-shadow: 0 8px 25px rgba(0,0,0,0.3), inset 0 2px 5px rgba(255,255,255,0.2);
-            border: 3px solid #654321;
+            border: 4px solid #654321;
             z-index: -1;
         }
         
-        .island.fractions::before { background: linear-gradient(145deg, #FF6B6B, #FF8E8E); }
-        .island.vocabulary::before { background: linear-gradient(145deg, #4ECDC4, #6FDDDD); }
-        .island.geometry::before { background: linear-gradient(145deg, #45B7D1, #6BC5E0); }
-        .island.arithmetic::before { background: linear-gradient(145deg, #96CEB4, #B5D6C7); }
-        .island.logic::before { background: linear-gradient(145deg, #FFEAA7, #FDCB6E); }
-        .island.science::before { background: linear-gradient(145deg, #DDA0DD, #E6B3E6); }
+        .character {
+            position: absolute;
+            bottom: -15px;
+            right: 15px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #FFE4B5, #DEB887);
+            border: 3px solid #8B4513;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            animation: bounce 2s ease-in-out infinite;
+            z-index: 10;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+        
+        .speech-bubble {
+            position: absolute;
+            bottom: 60px;
+            right: -10px;
+            background: white;
+            padding: 8px 12px;
+            border-radius: 12px;
+            border: 2px solid #333;
+            font-size: 10px;
+            font-weight: bold;
+            color: #333;
+            white-space: nowrap;
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 0.3s ease;
+            z-index: 11;
+            font-family: 'Comic Sans MS', cursive;
+        }
+        
+        .speech-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            right: 20px;
+            width: 0;
+            height: 0;
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            border-top: 6px solid white;
+        }
+        
+        .island:hover .speech-bubble {
+            opacity: 1;
+            transform: scale(1);
+        }
+        
+        .island.fractions::before { background: linear-gradient(145deg, #FF69B4, #FF1493); }
+        .island.vocabulary::before { background: linear-gradient(145deg, #00CED1, #20B2AA); }
+        .island.geometry::before { background: linear-gradient(145deg, #1E90FF, #4169E1); }
+        .island.arithmetic::before { background: linear-gradient(145deg, #32CD32, #228B22); }
+        .island.logic::before { background: linear-gradient(145deg, #FFD700, #FFA500); }
+        .island.science::before { background: linear-gradient(145deg, #9370DB, #8A2BE2); }
         .island:hover {
             transform: translateY(-10px) scale(1.05) rotateX(5deg);
             filter: brightness(1.1);
@@ -114,28 +211,45 @@
             to { box-shadow: 0 8px 25px rgba(0,0,0,0.3), 0 0 30px rgba(50,205,50,0.8); }
         }
         .island-name {
-            font-size: 13px;
+            font-size: 14px;
             font-weight: bold;
             color: white;
             margin-bottom: 8px;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
-            z-index: 1;
+            z-index: 2;
+            font-family: 'Comic Sans MS', cursive;
+        }
+        
+        @media (max-width: 768px) {
+            .island-name { font-size: 12px; }
         }
         .island-stars {
             font-size: 18px;
-            z-index: 1;
+            z-index: 2;
             filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.5));
         }
+        
+        @media (max-width: 768px) {
+            .island-stars { font-size: 16px; }
+        }
         .mini-game {
-            background: linear-gradient(145deg, #ffffff, #f8f9fa);
+            background: linear-gradient(145deg, #ffffff, #f0f8ff);
             border-radius: 20px;
-            padding: 40px;
-            margin: 20px auto;
+            padding: 30px;
+            margin: 15px auto;
             max-width: 700px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.15), 0 0 0 1px rgba(255,255,255,0.1);
             backdrop-filter: blur(10px);
             position: relative;
             overflow: hidden;
+        }
+        
+        @media (max-width: 768px) {
+            .mini-game {
+                padding: 20px;
+                margin: 10px;
+                border-radius: 15px;
+            }
         }
         
         .mini-game::before {
@@ -157,16 +271,24 @@
         .options-container {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 20px;
-            margin: 40px 0;
+            gap: 15px;
+            margin: 30px 0;
             max-width: 500px;
             margin-left: auto;
             margin-right: auto;
         }
+        
+        @media (max-width: 768px) {
+            .options-container {
+                grid-template-columns: 1fr;
+                max-width: 300px;
+                gap: 12px;
+            }
+        }
         .option-item {
-            min-height: 80px;
-            border-radius: 15px;
-            border: 3px solid #ddd;
+            min-height: 70px;
+            border-radius: 20px;
+            border: 4px solid #ddd;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -174,12 +296,21 @@
             font-size: 16px;
             font-weight: bold;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            background: linear-gradient(145deg, #f8f9fa, #e9ecef);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            background: linear-gradient(145deg, #fff8dc, #f0e68c);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
             position: relative;
             overflow: hidden;
             text-align: center;
             padding: 15px;
+            font-family: 'Comic Sans MS', cursive;
+        }
+        
+        @media (max-width: 768px) {
+            .option-item {
+                min-height: 60px;
+                font-size: 14px;
+                padding: 12px;
+            }
         }
         
         .option-item::before {
@@ -232,18 +363,28 @@
             margin-top: 20px;
         }
         .game-button {
-            background: linear-gradient(145deg, #2196F3, #1976D2);
+            background: linear-gradient(145deg, #FF6347, #FF4500);
             color: white;
             border: none;
-            padding: 12px 24px;
-            margin: 0 8px;
+            padding: 12px 20px;
+            margin: 5px;
             border-radius: 25px;
             cursor: pointer;
             font-weight: 600;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
+            box-shadow: 0 4px 15px rgba(255, 99, 71, 0.4);
             position: relative;
             overflow: hidden;
+            font-family: 'Comic Sans MS', cursive;
+            font-size: 14px;
+        }
+        
+        @media (max-width: 768px) {
+            .game-button {
+                padding: 10px 16px;
+                font-size: 12px;
+                margin: 3px;
+            }
         }
         
         .game-button::before {
@@ -299,17 +440,25 @@
             border-left: 5px solid #DC3545;
         }
         .hint-button {
-            background: linear-gradient(145deg, #FF9800, #F57C00);
-            color: white;
+            background: linear-gradient(145deg, #FFD700, #FFA500);
+            color: #8B4513;
             border: none;
             padding: 10px 18px;
-            margin: 0 5px;
+            margin: 5px;
             border-radius: 20px;
             cursor: pointer;
             font-size: 14px;
             font-weight: 600;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3);
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+            font-family: 'Comic Sans MS', cursive;
+        }
+        
+        @media (max-width: 768px) {
+            .hint-button {
+                padding: 8px 14px;
+                font-size: 12px;
+            }
         }
         .hint-button:hover {
             transform: translateY(-2px);
@@ -494,12 +643,12 @@
             const [startTime, setStartTime] = React.useState(Date.now());
 
             const islandConfig = {
-                1: { file: 'fractions.json', title: '⚙️ Gear Gears - Fraction Challenge', type: 'fractions' },
-                2: { file: 'vocabulary.json', title: '🌬️ Word Winds - Vocabulary Challenge', type: 'vocabulary' },
-                3: { file: 'geometry.json', title: '🟠 Shape Shores - Geometry Challenge', type: 'geometry' },
-                4: { file: 'arithmetic.json', title: '📊 Number Peaks - Math Challenge', type: 'arithmetic' },
-                5: { file: 'logic.json', title: '🧠 Logic Lagoon - Thinking Challenge', type: 'logic' },
-                6: { file: 'science.json', title: '🔬 Science Skies - Discovery Challenge', type: 'science' }
+                1: { file: 'fractions.json', title: 'Fraction Falls - Number Challenge', type: 'fractions' },
+                2: { file: 'vocabulary.json', title: 'Word Winds - Language Challenge', type: 'vocabulary' },
+                3: { file: 'geometry.json', title: 'Shape Shores - Geometry Challenge', type: 'geometry' },
+                4: { file: 'arithmetic.json', title: 'Number Peaks - Math Challenge', type: 'arithmetic' },
+                5: { file: 'logic.json', title: 'Logic Lagoon - Thinking Challenge', type: 'logic' },
+                6: { file: 'science.json', title: 'Science Skies - Discovery Challenge', type: 'science' }
             };
 
             const config = islandConfig[islandId];
@@ -533,6 +682,7 @@
 
             const selectOption = (index) => {
                 setSelectedOption(index);
+                window.soundManager.playClick();
             };
 
             const checkAnswer = () => {
@@ -544,7 +694,13 @@
                 
                 window.xapi.trackAnswered(currentProblem.id, response, isCorrect, duration, hintsUsed);
                 
-                setFeedback(isCorrect ? "Correct! Great job! 🎉" : "Try again! You can do it! 💪");
+                if (isCorrect) {
+                    window.soundManager.playSuccess();
+                    setFeedback("Awesome! You got it right!");
+                } else {
+                    window.soundManager.playError();
+                    setFeedback("Oops! Try again, you can do it!");
+                }
                 setShowFeedback(true);
                 
                 if (isCorrect) {
@@ -561,6 +717,7 @@
                             const score = Math.round((newCorrectAnswers / contentData.items.length) * 100);
                             
                             window.xapi.trackCompleted(`${config.type}-game`, score, stars);
+                            window.soundManager.playCompletion();
                             onComplete(stars);
                         }
                     }, 2000);
@@ -572,6 +729,7 @@
                     const newHintIndex = currentHintIndex + 1;
                     setCurrentHintIndex(newHintIndex);
                     setHintsUsed(hintsUsed + 1);
+                    window.soundManager.playHint();
                     window.xapi.trackHintSought(currentProblem.id, newHintIndex);
                 }
             };
@@ -808,6 +966,12 @@
                                     <div className="island-name">{island.name}</div>
                                     <div className="island-stars">
                                         {island.stars > 0 ? '⭐'.repeat(island.stars) : '🔒'}
+                                    </div>
+                                    <div className="character">
+                                        {island.id === 1 ? '🤖' : island.id === 2 ? '📚' : island.id === 3 ? '📐' : island.id === 4 ? '🔢' : island.id === 5 ? '🧩' : '🔬'}
+                                    </div>
+                                    <div className="speech-bubble">
+                                        {island.completed ? 'Great job!' : 'Come play!'}
                                     </div>
                                 </div>
                             );

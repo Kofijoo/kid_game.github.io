@@ -48,25 +48,186 @@
         @media (max-width: 768px) {
             .game-container { padding: 10px; }
         }
+        .home-menu {
+            text-align: center;
+            padding: 40px 20px;
+            position: relative;
+        }
+        
+        .home-title {
+            font-size: 3.5em;
+            color: #2C3E50;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+            margin-bottom: 20px;
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+        
+        @keyframes titleGlow {
+            from { text-shadow: 3px 3px 6px rgba(0,0,0,0.3); }
+            to { text-shadow: 3px 3px 15px rgba(52, 152, 219, 0.6); }
+        }
+        
+        .home-subtitle {
+            font-size: 1.4em;
+            color: #34495E;
+            margin-bottom: 30px;
+            animation: fadeInUp 1s ease-out;
+        }
+        
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .home-characters {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 40px 0;
+            flex-wrap: wrap;
+        }
+        
+        .home-character {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #FFE4B5, #DEB887);
+            border: 4px solid #8B4513;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 35px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            animation: characterFloat 3s ease-in-out infinite;
+            position: relative;
+        }
+        
+        .home-character:nth-child(1) { animation-delay: 0s; }
+        .home-character:nth-child(2) { animation-delay: 0.5s; }
+        .home-character:nth-child(3) { animation-delay: 1s; }
+        .home-character:nth-child(4) { animation-delay: 1.5s; }
+        
+        @keyframes characterFloat {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            25% { transform: translateY(-10px) rotate(2deg); }
+            50% { transform: translateY(-5px) rotate(0deg); }
+            75% { transform: translateY(-15px) rotate(-2deg); }
+        }
+        
+        .home-character:hover {
+            transform: scale(1.2) translateY(-10px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+        
+        .character-speech {
+            position: absolute;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            padding: 10px 15px;
+            border-radius: 15px;
+            border: 3px solid #333;
+            font-size: 12px;
+            font-weight: bold;
+            color: #333;
+            white-space: nowrap;
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+        
+        .character-speech::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 8px solid transparent;
+            border-top-color: white;
+        }
+        
+        .home-character:hover .character-speech {
+            opacity: 1;
+            transform: translateX(-50%) translateY(-10px);
+        }
+        
         .start-button {
-            background: #4CAF50;
+            background: linear-gradient(145deg, #E74C3C, #C0392B);
             color: white;
             border: none;
-            padding: 15px 30px;
-            font-size: 18px;
+            padding: 20px 40px;
+            font-size: 24px;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            margin: 30px 10px;
+            box-shadow: 0 8px 25px rgba(231, 76, 60, 0.4);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            font-family: 'Comic Sans MS', cursive;
+        }
+        
+        .start-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+        
+        .start-button:hover::before {
+            left: 100%;
+        }
+        
+        .start-button:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 12px 35px rgba(231, 76, 60, 0.6);
+        }
+        
+        .teacher-button {
+            background: linear-gradient(145deg, #3498DB, #2980B9);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 16px;
+            font-weight: bold;
             border-radius: 25px;
             cursor: pointer;
-            margin-top: 20px;
+            margin: 10px;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.4);
+            transition: all 0.3s ease;
+            font-family: 'Comic Sans MS', cursive;
         }
-        .start-button:hover {
-            background: #45a049;
+        
+        .teacher-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.6);
+        }
+        
+        .catchphrase {
+            font-size: 1.2em;
+            color: #E67E22;
+            font-weight: bold;
+            margin: 20px 0;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
         }
         .island-map {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            grid-template-columns: repeat(3, 1fr);
             gap: 20px;
             margin-top: 30px;
-            max-width: 700px;
+            max-width: 600px;
             margin-left: auto;
             margin-right: auto;
             perspective: 1000px;
@@ -82,8 +243,8 @@
         
         @media (max-width: 480px) {
             .island-map {
-                grid-template-columns: 1fr;
-                max-width: 200px;
+                grid-template-columns: repeat(2, 1fr);
+                max-width: 300px;
             }
         }
         .island {
@@ -474,7 +635,7 @@
             font-style: italic;
         }
         .hint-display::before {
-            content: "💡 Hint: ";
+            content: "Hint: ";
             font-weight: bold;
         }
         .dashboard {
@@ -576,7 +737,7 @@
             return (
                 <div className="dashboard">
                     <div className="dashboard-header">
-                        <h2>📊 Teacher Dashboard</h2>
+                        <h2>Teacher Dashboard</h2>
                         <button className="game-button" onClick={onBack}>
                             Back to Game
                         </button>
@@ -896,7 +1057,7 @@
 
             return (
                 <div className="mini-game">
-                    <h3>⚙️ Gear Gears - Fraction Challenge</h3>
+                    <h3>Gear Gears - Fraction Challenge</h3>
                     <p>Problem {currentProblemIndex + 1} of {contentData.items.length}</p>
                     <p>{currentProblem.question}</p>
                     
@@ -952,7 +1113,7 @@
 
             return (
                 <div>
-                    <h2>Choose Your Island Adventure! 🏝️</h2>
+                    <h2>Choose Your Island Adventure!</h2>
                     <p>Click on an island to start learning challenges</p>
                     <div className="island-map">
                         {islands.map(island => {
@@ -968,7 +1129,7 @@
                                         {island.stars > 0 ? '⭐'.repeat(island.stars) : '🔒'}
                                     </div>
                                     <div className="character">
-                                        {island.id === 1 ? '🤖' : island.id === 2 ? '📚' : island.id === 3 ? '📐' : island.id === 4 ? '🔢' : island.id === 5 ? '🧩' : '🔬'}
+                                        {island.id === 1 ? '👩‍💻' : island.id === 2 ? '👨‍🏫' : island.id === 3 ? '👩‍🔬' : island.id === 4 ? '👨‍💼' : island.id === 5 ? '🧙‍♀️' : '👨‍🚀'}
                                     </div>
                                     <div className="speech-bubble">
                                         {island.completed ? 'Great job!' : 'Come play!'}
@@ -1027,13 +1188,37 @@
 
                 if (!gameStarted) {
                     return (
-                        <div>
-                            <p>Repair floating islands by solving learning challenges!</p>
-                            <button className="start-button" onClick={startAdventure}>
-                                Start Adventure
+                        <div className="home-menu">
+                            <h1 className="home-title">Quest of the Sky Coders</h1>
+                            <p className="home-subtitle">Join our magical friends on an amazing learning adventure!</p>
+                            
+                            <div className="home-characters">
+                                <div className="home-character" onClick={() => window.soundManager.playClick()}>
+                                    👧
+                                    <div className="character-speech">Hi! I'm Luna!</div>
+                                </div>
+                                <div className="home-character" onClick={() => window.soundManager.playClick()}>
+                                    👦
+                                    <div className="character-speech">I'm Max!</div>
+                                </div>
+                                <div className="home-character" onClick={() => window.soundManager.playClick()}>
+                                    🧙‍♂️
+                                    <div className="character-speech">I'm Professor Wise!</div>
+                                </div>
+                                <div className="home-character" onClick={() => window.soundManager.playClick()}>
+                                    🦸‍♀️
+                                    <div className="character-speech">I'm Captain Smart!</div>
+                                </div>
+                            </div>
+                            
+                            <p className="catchphrase">Ready to explore floating islands and become a learning hero?</p>
+                            
+                            <button className="start-button" onClick={() => { window.soundManager.playSuccess(); startAdventure(); }}>
+                                🚀 Start Your Epic Adventure!
                             </button>
-                            <div style={{marginTop: '20px'}}>
-                                <button className="game-button" onClick={() => setShowDashboard(true)}>
+                            
+                            <div>
+                                <button className="teacher-button" onClick={() => setShowDashboard(true)}>
                                     📊 Teacher Dashboard
                                 </button>
                             </div>
@@ -1050,14 +1235,16 @@
 
             return (
                 <div className="game-container">
-                    <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-                        <h1>Quest of the Sky Coders</h1>
-                        {gameStarted && !showDashboard && (
-                            <button className="game-button" onClick={() => setShowDashboard(true)}>
-                                📊 Dashboard
-                            </button>
-                        )}
-                    </div>
+                    {gameStarted && (
+                        <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px'}}>
+                            <h1 style={{color: '#2C3E50', fontSize: '2.5em'}}>Quest of the Sky Coders</h1>
+                            {!showDashboard && (
+                                <button className="teacher-button" onClick={() => setShowDashboard(true)}>
+                                    📊 Dashboard
+                                </button>
+                            )}
+                        </div>
+                    )}
                     {renderCurrentView()}
                 </div>
             );

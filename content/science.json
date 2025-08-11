@@ -7,26 +7,26 @@
     {
       "id": "sci_001",
       "question": "What makes things fall down?",
-      "options": ["Gravity", "Wind", "Magnets", "Light"],
-      "correct": 0,
+      "options": ["Wind", "Gravity", "Magnets", "Light"],
+      "correct": 1,
       "band": "A",
       "hints": ["Think about the force that pulls everything toward Earth", "Gravity is the force that makes things fall down"],
       "misconceptions": ["force_confusion"]
     },
     {
       "id": "sci_002",
-      "question": "What do plants need to grow?",
-      "options": ["Sunlight and water", "Only water", "Only sunlight", "Only soil"],
-      "correct": 0,
+      "question": "Which animal lives in water?",
+      "options": ["Dog", "Cat", "Fish", "Bird"],
+      "correct": 2,
       "band": "A",
       "hints": ["Plants need multiple things to stay healthy", "Plants need both sunlight and water to grow properly"],
       "misconceptions": ["single_need"]
     },
     {
       "id": "sci_003",
-      "question": "What happens to water when it gets very cold?",
-      "options": ["It turns to ice", "It disappears", "It gets hot", "It turns to gas"],
-      "correct": 0,
+      "question": "What do we breathe?",
+      "options": ["Water", "Food", "Soil", "Air"],
+      "correct": 3,
       "band": "B",
       "hints": ["Think about what happens in a freezer", "When water gets very cold, it freezes and becomes ice"],
       "misconceptions": ["state_confusion"]

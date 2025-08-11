@@ -6,27 +6,27 @@
   "items": [
     {
       "id": "logic_001",
-      "question": "What comes next: 🔴 🔵 🔴 🔵 ?",
-      "options": ["🔴", "🔵", "🟡", "🟢"],
-      "correct": 0,
+      "question": "What comes next: Red Blue Red Blue ?",
+      "options": ["Green", "Red", "Yellow", "Blue"],
+      "correct": 1,
       "band": "A",
       "hints": ["Look at the pattern - what repeats?", "Red, blue, red, blue... so red comes next"],
       "misconceptions": ["random_choice"]
     },
     {
       "id": "logic_002",
-      "question": "Which doesn't belong: 🐶 🐱 🐭 🚗",
-      "options": ["🚗", "🐶", "🐱", "🐭"],
-      "correct": 0,
+      "question": "Which doesn't belong: Dog Cat Mouse Car",
+      "options": ["Dog", "Cat", "Car", "Mouse"],
+      "correct": 2,
       "band": "A",
       "hints": ["Three of these are alive, one is not", "The car is the only thing that isn't an animal"],
       "misconceptions": ["size_confusion"]
     },
     {
       "id": "logic_003",
-      "question": "If all birds can fly, and a robin is a bird, then:",
-      "options": ["A robin can fly", "A robin cannot fly", "Birds are robins", "Flying is hard"],
-      "correct": 0,
+      "question": "Complete the pattern: 2, 4, 6, 8, ?",
+      "options": ["9", "12", "10", "11"],
+      "correct": 2,
       "band": "B",
       "hints": ["Use the two facts given to make a conclusion", "If all birds fly, and robin is a bird, then robin can fly"],
       "misconceptions": ["logic_reversal"]

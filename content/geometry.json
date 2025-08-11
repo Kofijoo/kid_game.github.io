@@ -7,26 +7,26 @@
     {
       "id": "geo_001",
       "question": "How many sides does a triangle have?",
-      "options": ["3", "4", "5", "6"],
-      "correct": 0,
+      "options": ["4", "5", "3", "6"],
+      "correct": 2,
       "band": "A",
       "hints": ["Count the straight lines that make up a triangle", "Tri means three - triangle has three sides"],
       "misconceptions": ["counting_vertices"]
     },
     {
       "id": "geo_002",
-      "question": "Which shape has 4 equal sides?",
-      "options": ["square", "triangle", "circle", "pentagon"],
-      "correct": 0,
+      "question": "Which shape is round?",
+      "options": ["square", "triangle", "rectangle", "circle"],
+      "correct": 3,
       "band": "A",
       "hints": ["Think about shapes with four sides that are all the same length", "A square has 4 sides that are all equal"],
       "misconceptions": ["rectangle_confusion"]
     },
     {
       "id": "geo_003",
-      "question": "How many corners does a rectangle have?",
-      "options": ["4", "3", "5", "6"],
-      "correct": 0,
+      "question": "How many sides does a pentagon have?",
+      "options": ["3", "4", "5", "6"],
+      "correct": 2,
       "band": "B",
       "hints": ["Count the points where two sides meet", "Rectangles have four corners where the sides connect"],
       "misconceptions": ["counting_sides"]

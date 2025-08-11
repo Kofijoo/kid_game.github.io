@@ -745,6 +745,25 @@
             font-weight: bold;
             color: #4CAF50;
         }
+        
+        .logic-emoji {
+            font-size: 32px;
+            line-height: 1.2;
+            display: inline-block;
+            margin: 0 4px;
+        }
+        
+        @media (max-width: 768px) {
+            .logic-emoji {
+                font-size: 40px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .logic-emoji {
+                font-size: 48px;
+            }
+        }
     </style>
     <script type="text/babel">
         function TeacherDashboard({ onBack }) {
@@ -981,7 +1000,7 @@
                 <div className="mini-game">
                     <h3>{config.title}</h3>
                     <p>Problem {currentProblemIndex + 1} of {contentData.items.length}</p>
-                    <p style={{fontSize: '18px', margin: '20px 0'}}>{currentProblem.question}</p>
+                    <p style={{fontSize: '18px', margin: '20px 0'}} dangerouslySetInnerHTML={{__html: currentProblem.question}}></p>
                     
                     <div className="options-container">
                         {options.map((option, index) => (
@@ -989,8 +1008,8 @@
                                 key={index}
                                 className={`option-item ${selectedOption === index ? 'selected' : ''}`}
                                 onClick={() => selectOption(index)}
+                                dangerouslySetInnerHTML={{__html: option}}
                             >
-                                {option}
                             </div>
                         ))}
                     </div>

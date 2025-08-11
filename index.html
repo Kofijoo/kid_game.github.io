@@ -7,6 +7,7 @@
     <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="./src/xapi.js"></script>
 </head>
 <body>
     <div id="root"></div>
@@ -178,6 +179,7 @@
             const [correctAnswers, setCorrectAnswers] = React.useState(0);
             const [currentHintIndex, setCurrentHintIndex] = React.useState(-1);
             const [hintsUsed, setHintsUsed] = React.useState(0);
+            const [startTime, setStartTime] = React.useState(Date.now());
 
             React.useEffect(() => {
                 fetch('./content/fractions.json')
@@ -212,6 +214,12 @@
                 if (selectedGear === null) return;
                 
                 const isCorrect = selectedGear === currentProblem.correct;
+                const duration = Math.round((Date.now() - startTime) / 1000);
+                const response = currentProblem.fractions[selectedGear];
+                
+                // Track xAPI answered event
+                window.xapi.trackAnswered(currentProblem.id, response, isCorrect, duration, hintsUsed);
+                
                 setFeedback(isCorrect ? "Correct! Great job!" : "Try again! Think about which fraction is bigger.");
                 setShowFeedback(true);
                 
@@ -228,6 +236,11 @@
                             // Game complete - award stars based on performance
                             const stars = newCorrectAnswers === contentData.items.length ? 3 : 
                                          newCorrectAnswers >= contentData.items.length * 0.7 ? 2 : 1;
+                            const score = Math.round((newCorrectAnswers / contentData.items.length) * 100);
+                            
+                            // Track xAPI completion event
+                            window.xapi.trackCompleted("gear-gears-game", score, stars);
+                            
                             onComplete(stars);
                         }
                     }, 2000);
@@ -242,8 +255,12 @@
 
             const showHint = () => {
                 if (currentHintIndex < currentProblem.hints.length - 1) {
-                    setCurrentHintIndex(currentHintIndex + 1);
+                    const newHintIndex = currentHintIndex + 1;
+                    setCurrentHintIndex(newHintIndex);
                     setHintsUsed(hintsUsed + 1);
+                    
+                    // Track xAPI hint sought event
+                    window.xapi.trackHintSought(currentProblem.id, newHintIndex);
                 }
             };
 
@@ -252,6 +269,7 @@
                 setFeedback("");
                 setShowFeedback(false);
                 setCurrentHintIndex(-1);
+                setStartTime(Date.now());
             };
 
             return (

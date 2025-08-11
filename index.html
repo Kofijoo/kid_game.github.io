@@ -37,8 +37,82 @@
         .start-button:hover {
             background: #45a049;
         }
+        .island-map {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 30px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .island {
+            background: #8B4513;
+            border-radius: 50%;
+            width: 120px;
+            height: 80px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: 3px solid #654321;
+            transition: transform 0.2s;
+        }
+        .island:hover {
+            transform: scale(1.1);
+        }
+        .island.completed {
+            background: #32CD32;
+            border-color: #228B22;
+        }
+        .island-name {
+            font-size: 12px;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 5px;
+        }
+        .island-stars {
+            font-size: 16px;
+        }
     </style>
     <script type="text/babel">
+        function IslandMap() {
+            const [islands, setIslands] = React.useState([
+                { id: 1, name: "Fraction Falls", topic: "fractions", stars: 0, completed: false },
+                { id: 2, name: "Word Winds", topic: "vocabulary", stars: 0, completed: false },
+                { id: 3, name: "Shape Shores", topic: "geometry", stars: 0, completed: false },
+                { id: 4, name: "Number Peaks", topic: "arithmetic", stars: 0, completed: false },
+                { id: 5, name: "Logic Lagoon", topic: "logic", stars: 0, completed: false },
+                { id: 6, name: "Science Skies", topic: "science", stars: 0, completed: false }
+            ]);
+
+            const selectIsland = (islandId) => {
+                alert(`Starting challenge on ${islands.find(i => i.id === islandId).name}!`);
+            };
+
+            return (
+                <div>
+                    <h2>Choose Your Island Adventure! 🏝️</h2>
+                    <p>Click on an island to start learning challenges</p>
+                    <div className="island-map">
+                        {islands.map(island => (
+                            <div 
+                                key={island.id}
+                                className={`island ${island.completed ? 'completed' : ''}`}
+                                onClick={() => selectIsland(island.id)}
+                            >
+                                <div className="island-name">{island.name}</div>
+                                <div className="island-stars">
+                                    {island.stars > 0 ? '⭐'.repeat(island.stars) : '🔒'}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+        }
+
         function App() {
             const [gameStarted, setGameStarted] = React.useState(false);
 
@@ -57,10 +131,7 @@
                             </button>
                         </div>
                     ) : (
-                        <div>
-                            <p>Welcome to the Sky Islands! 🏝️</p>
-                            <p>Your adventure begins...</p>
-                        </div>
+                        <IslandMap />
                     )}
                 </div>
             );

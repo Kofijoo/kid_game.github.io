@@ -8,6 +8,7 @@
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="./src/xapi.js"></script>
+    <script src="./src/scorm.js"></script>
 </head>
 <body>
     <div id="root"></div>
@@ -517,6 +518,8 @@
 
             const startAdventure = () => {
                 setGameStarted(true);
+                // Initialize SCORM when game starts
+                window.scorm.initialize();
             };
 
             const selectIsland = (islandId) => {
@@ -530,6 +533,11 @@
                             ? { ...island, stars: Math.max(island.stars, starsEarned), completed: true }
                             : island
                     ));
+                    
+                    // Update SCORM score based on stars (1 star = 60%, 2 stars = 80%, 3 stars = 100%)
+                    const score = starsEarned === 3 ? 100 : starsEarned === 2 ? 80 : 60;
+                    window.scorm.setScore(score);
+                    window.scorm.setCompletion(true, starsEarned >= 2);
                 }
                 setCurrentIsland(null);
             };

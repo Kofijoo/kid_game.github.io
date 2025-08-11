@@ -10,6 +10,7 @@
     <script src="./src/xapi.js"></script>
     <script src="./src/scorm.js"></script>
     <script src="./src/sounds.js"></script>
+    <script src="./src/ai-generator.js"></script>
 </head>
 <body>
     <div id="root"></div>
@@ -17,14 +18,24 @@
         body {
             font-family: 'Comic Sans MS', 'Trebuchet MS', cursive, sans-serif;
             margin: 0;
-            padding: 10px;
+            padding: 0;
             background: linear-gradient(135deg, #87CEEB 0%, #98FB98 50%, #FFB6C1 100%);
             min-height: 100vh;
             overflow-x: hidden;
+            font-size: 18px;
         }
         
         @media (max-width: 768px) {
-            body { padding: 5px; }
+            body { 
+                font-size: 20px;
+                padding: 0;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            body { 
+                font-size: 22px;
+            }
         }
         
         body::before {
@@ -40,13 +51,20 @@
         }
         .game-container {
             text-align: center;
-            max-width: 800px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
         
         @media (max-width: 768px) {
-            .game-container { padding: 10px; }
+            .game-container { 
+                padding: 15px;
+                min-height: 100vh;
+            }
         }
         .home-menu {
             text-align: center;
@@ -62,6 +80,18 @@
             animation: titleGlow 3s ease-in-out infinite alternate;
         }
         
+        @media (max-width: 768px) {
+            .home-title {
+                font-size: 2.8em;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .home-title {
+                font-size: 2.2em;
+            }
+        }
+        
         @keyframes titleGlow {
             from { text-shadow: 3px 3px 6px rgba(0,0,0,0.3); }
             to { text-shadow: 3px 3px 15px rgba(52, 152, 219, 0.6); }
@@ -72,6 +102,18 @@
             color: #34495E;
             margin-bottom: 30px;
             animation: fadeInUp 1s ease-out;
+        }
+        
+        @media (max-width: 768px) {
+            .home-subtitle {
+                font-size: 1.6em;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .home-subtitle {
+                font-size: 1.8em;
+            }
         }
         
         @keyframes fadeInUp {
@@ -216,6 +258,18 @@
             font-weight: bold;
             margin: 20px 0;
             animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @media (max-width: 768px) {
+            .catchphrase {
+                font-size: 1.4em;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .catchphrase {
+                font-size: 1.6em;
+            }
         }
         
         @keyframes pulse {
@@ -817,10 +871,27 @@
             React.useEffect(() => {
                 if (!config) return;
                 
-                fetch(`./content/${config.file}`)
-                    .then(response => response.json())
-                    .then(data => setContentData(data))
-                    .catch(error => {
+                // Load JSON content first, then try AI if enabled
+                const loadContent = async () => {
+                    // Always try JSON file first
+                    try {
+                        const response = await fetch(`./content/${config.file}`);
+                        const data = await response.json();
+                        setContentData(data);
+                        
+                        // Try AI generation only if API keys are configured
+                        if (window.aiGenerator && (window.aiGenerator.deepseekApiKey || window.aiGenerator.openrouterApiKey)) {
+                            try {
+                                const aiContent = await window.aiGenerator.generateQuestions(config.type, 'A', 3);
+                                if (aiContent && aiContent.items && aiContent.items.length > 0) {
+                                    console.log('Using AI-generated questions for', config.type);
+                                    setContentData(aiContent);
+                                }
+                            } catch (aiError) {
+                                console.log('AI generation failed, using JSON content');
+                            }
+                        }
+                    } catch (error) {
                         console.error('Error loading content:', error);
                         setContentData({
                             items: [{
@@ -831,7 +902,10 @@
                                 hints: ["Stay tuned for more adventures!"]
                             }]
                         });
-                    });
+                    }
+                };
+                
+                loadContent();
             }, [islandId]);
 
             if (!contentData || !config) {
@@ -1167,11 +1241,24 @@
 
             const completeGame = (starsEarned) => {
                 if (starsEarned > 0 && currentIsland) {
-                    setIslands(prev => prev.map(island => 
+                    const updatedIslands = islands.map(island => 
                         island.id === currentIsland 
                             ? { ...island, stars: Math.max(island.stars, starsEarned), completed: true }
                             : island
-                    ));
+                    );
+                    setIslands(updatedIslands);
+                    
+                    // Check if all islands are completed
+                    const allCompleted = updatedIslands.every(island => island.completed);
+                    if (allCompleted) {
+                        setTimeout(() => {
+                            window.soundManager.playCompletion();
+                            alert('🎉 CONGRATULATIONS! 🎉\n\nYou have completed ALL the Sky Islands!\nYou are now a true Sky Coder Hero!\n\nWould you like to start a new adventure?');
+                            // Reset all islands for new adventure
+                            setIslands(prev => prev.map(island => ({ ...island, stars: 0, completed: false })));
+                            setGameStarted(false);
+                        }, 1000);
+                    }
                     
                     // Update SCORM score based on stars (1 star = 60%, 2 stars = 80%, 3 stars = 100%)
                     const score = starsEarned === 3 ? 100 : starsEarned === 2 ? 80 : 60;
@@ -1220,6 +1307,16 @@
                             <div>
                                 <button className="teacher-button" onClick={() => setShowDashboard(true)}>
                                     📊 Teacher Dashboard
+                                </button>
+                                <button className="teacher-button" onClick={() => {
+                                    const deepseekKey = prompt('Enter your DeepSeek API key (optional):');
+                                    const openrouterKey = prompt('Enter your OpenRouter API key (optional):');
+                                    if (deepseekKey || openrouterKey) {
+                                        window.aiGenerator.setApiKeys(deepseekKey, openrouterKey);
+                                        alert('AI question generation enabled! New questions will be generated dynamically.');
+                                    }
+                                }}>
+                                    🤖 Enable AI Questions
                                 </button>
                             </div>
                         </div>

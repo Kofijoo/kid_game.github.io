@@ -1,0 +1,35 @@
+{
+  "pack_id": "vocabulary_basic",
+  "locale": "en-US",
+  "topic": "vocabulary.synonyms",
+  "title": "Word Winds Challenge",
+  "items": [
+    {
+      "id": "vocab_001",
+      "question": "Which word means the same as 'happy'?",
+      "options": ["joyful", "sad", "angry", "tired"],
+      "correct": 0,
+      "band": "A",
+      "hints": ["Think about feelings that are similar to happy", "Joyful means full of joy, which is like happiness"],
+      "misconceptions": ["opposite_meaning"]
+    },
+    {
+      "id": "vocab_002",
+      "question": "Which word means the same as 'big'?",
+      "options": ["huge", "tiny", "small", "little"],
+      "correct": 0,
+      "band": "A",
+      "hints": ["Look for a word that describes something very large", "Huge means extremely big"],
+      "misconceptions": ["opposite_meaning"]
+    },
+    {
+      "id": "vocab_003",
+      "question": "Which word means the same as 'quick'?",
+      "options": ["fast", "slow", "lazy", "tired"],
+      "correct": 0,
+      "band": "B",
+      "hints": ["Think about speed and movement", "Fast and quick both describe rapid movement"],
+      "misconceptions": ["opposite_meaning"]
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "pack_id": "arithmetic_basic",
+  "locale": "en-US",
+  "topic": "arithmetic.addition",
+  "title": "Number Peaks Challenge",
+  "items": [
+    {
+      "id": "arith_001",
+      "question": "What is 7 + 5?",
+      "options": ["12", "11", "13", "10"],
+      "correct": 0,
+      "band": "A",
+      "hints": ["Count up from 7: 8, 9, 10, 11, 12", "7 + 5 = 12"],
+      "misconceptions": ["counting_error"]
+    },
+    {
+      "id": "arith_002",
+      "question": "What is 15 - 8?",
+      "options": ["7", "6", "8", "9"],
+      "correct": 0,
+      "band": "A",
+      "hints": ["Count back from 15 eight times", "15 - 8 = 7"],
+      "misconceptions": ["subtraction_error"]
+    },
+    {
+      "id": "arith_003",
+      "question": "What is 6 × 4?",
+      "options": ["24", "20", "28", "22"],
+      "correct": 0,
+      "band": "B",
+      "hints": ["Think of 6 groups of 4, or 4 groups of 6", "6 × 4 = 24"],
+      "misconceptions": ["addition_instead"]
+    }
+  ]
+}

@@ -75,20 +75,150 @@
         .island-stars {
             font-size: 16px;
         }
+        .mini-game {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px auto;
+            max-width: 600px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .gear-container {
+            display: flex;
+            justify-content: space-around;
+            margin: 30px 0;
+        }
+        .gear {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 4px solid #666;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+        .gear:hover {
+            transform: scale(1.1);
+        }
+        .gear.selected {
+            border-color: #4CAF50;
+            background: #E8F5E8;
+        }
+        .fraction-display {
+            font-size: 24px;
+            margin: 20px 0;
+        }
+        .game-buttons {
+            margin-top: 20px;
+        }
+        .game-button {
+            background: #2196F3;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 0 10px;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+        .game-button:hover {
+            background: #1976D2;
+        }
+        .feedback {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+        .feedback.correct {
+            background: #D4EDDA;
+            color: #155724;
+        }
+        .feedback.incorrect {
+            background: #F8D7DA;
+            color: #721C24;
+        }
     </style>
     <script type="text/babel">
-        function IslandMap() {
-            const [islands, setIslands] = React.useState([
-                { id: 1, name: "Fraction Falls", topic: "fractions", stars: 0, completed: false },
-                { id: 2, name: "Word Winds", topic: "vocabulary", stars: 0, completed: false },
-                { id: 3, name: "Shape Shores", topic: "geometry", stars: 0, completed: false },
-                { id: 4, name: "Number Peaks", topic: "arithmetic", stars: 0, completed: false },
-                { id: 5, name: "Logic Lagoon", topic: "logic", stars: 0, completed: false },
-                { id: 6, name: "Science Skies", topic: "science", stars: 0, completed: false }
-            ]);
+        function GearGearsGame({ onComplete }) {
+            const [currentProblem, setCurrentProblem] = React.useState({
+                question: "Which gear is larger?",
+                fractions: ["1/2", "3/8"],
+                correct: 0
+            });
+            const [selectedGear, setSelectedGear] = React.useState(null);
+            const [feedback, setFeedback] = React.useState("");
+            const [showFeedback, setShowFeedback] = React.useState(false);
+
+            const selectGear = (index) => {
+                setSelectedGear(index);
+            };
+
+            const checkAnswer = () => {
+                if (selectedGear === null) return;
+                
+                const isCorrect = selectedGear === currentProblem.correct;
+                setFeedback(isCorrect ? "Correct! Great job!" : "Try again! Think about which fraction is bigger.");
+                setShowFeedback(true);
+                
+                if (isCorrect) {
+                    setTimeout(() => {
+                        onComplete(1); // Award 1 star
+                    }, 2000);
+                }
+            };
+
+            const resetGame = () => {
+                setSelectedGear(null);
+                setFeedback("");
+                setShowFeedback(false);
+            };
+
+            return (
+                <div className="mini-game">
+                    <h3>⚙️ Gear Gears - Fraction Challenge</h3>
+                    <p>{currentProblem.question}</p>
+                    
+                    <div className="gear-container">
+                        {currentProblem.fractions.map((fraction, index) => (
+                            <div 
+                                key={index}
+                                className={`gear ${selectedGear === index ? 'selected' : ''}`}
+                                onClick={() => selectGear(index)}
+                            >
+                                {fraction}
+                            </div>
+                        ))}
+                    </div>
+
+                    {showFeedback && (
+                        <div className={`feedback ${selectedGear === currentProblem.correct ? 'correct' : 'incorrect'}`}>
+                            {feedback}
+                        </div>
+                    )}
+
+                    <div className="game-buttons">
+                        <button className="game-button" onClick={checkAnswer} disabled={selectedGear === null}>
+                            Check Answer
+                        </button>
+                        <button className="game-button" onClick={resetGame}>
+                            Try Again
+                        </button>
+                        <button className="game-button" onClick={() => onComplete(0)}>
+                            Back to Map
+                        </button>
+                    </div>
+                </div>
+            );
+        }
+
+        function IslandMap({ islands, onSelectIsland }) {
 
             const selectIsland = (islandId) => {
-                alert(`Starting challenge on ${islands.find(i => i.id === islandId).name}!`);
+                onSelectIsland(islandId);
             };
 
             return (
@@ -115,24 +245,69 @@
 
         function App() {
             const [gameStarted, setGameStarted] = React.useState(false);
+            const [currentIsland, setCurrentIsland] = React.useState(null);
+            const [islands, setIslands] = React.useState([
+                { id: 1, name: "Fraction Falls", topic: "fractions", stars: 0, completed: false },
+                { id: 2, name: "Word Winds", topic: "vocabulary", stars: 0, completed: false },
+                { id: 3, name: "Shape Shores", topic: "geometry", stars: 0, completed: false },
+                { id: 4, name: "Number Peaks", topic: "arithmetic", stars: 0, completed: false },
+                { id: 5, name: "Logic Lagoon", topic: "logic", stars: 0, completed: false },
+                { id: 6, name: "Science Skies", topic: "science", stars: 0, completed: false }
+            ]);
 
             const startAdventure = () => {
                 setGameStarted(true);
             };
 
-            return (
-                <div className="game-container">
-                    <h1>Quest of the Sky Coders</h1>
-                    {!gameStarted ? (
+            const selectIsland = (islandId) => {
+                setCurrentIsland(islandId);
+            };
+
+            const completeGame = (starsEarned) => {
+                if (starsEarned > 0 && currentIsland) {
+                    setIslands(prev => prev.map(island => 
+                        island.id === currentIsland 
+                            ? { ...island, stars: Math.max(island.stars, starsEarned), completed: true }
+                            : island
+                    ));
+                }
+                setCurrentIsland(null);
+            };
+
+            const renderCurrentView = () => {
+                if (!gameStarted) {
+                    return (
                         <div>
                             <p>Repair floating islands by solving learning challenges!</p>
                             <button className="start-button" onClick={startAdventure}>
                                 Start Adventure
                             </button>
                         </div>
-                    ) : (
-                        <IslandMap />
-                    )}
+                    );
+                }
+
+                if (currentIsland === 1) {
+                    return <GearGearsGame onComplete={completeGame} />;
+                }
+
+                if (currentIsland) {
+                    return (
+                        <div>
+                            <p>This island's challenge is coming soon!</p>
+                            <button className="game-button" onClick={() => setCurrentIsland(null)}>
+                                Back to Map
+                            </button>
+                        </div>
+                    );
+                }
+
+                return <IslandMap islands={islands} onSelectIsland={selectIsland} />;
+            };
+
+            return (
+                <div className="game-container">
+                    <h1>Quest of the Sky Coders</h1>
+                    {renderCurrentView()}
                 </div>
             );
         }
